@@ -21,7 +21,7 @@ func (s SecFetchSite) String() string {
 type OriginCheckConfig struct {
 	ValidateMethod []string
 	AllowOrigin    []string
-	AllowSite      SecFetchSite
+	AllowSite      []SecFetchSite
 	Handler        http.Handler
 	ErrorHandler   http.Handler
 }
@@ -29,7 +29,7 @@ type OriginCheckConfig struct {
 type originCheck struct {
 	validateMethod []string
 	allowOrigin    []string
-	allowSite      SecFetchSite
+	allowSite      []SecFetchSite
 	errorHandler   http.Handler
 	handler        http.Handler
 }
@@ -64,7 +64,7 @@ func (oc *originCheck) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	secFetchSite := req.Header.Get(secFetchSiteHeader)
-	if secFetchSite != "" && oc.allowSite.String() != secFetchSite {
+	if secFetchSite != "" && !slices.Contains(oc.allowSite, SecFetchSite(secFetchSite)) {
 		oc.errorHandler.ServeHTTP(w, req)
 		return
 	}
