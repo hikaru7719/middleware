@@ -52,15 +52,19 @@ func OriginCheckWithConfig(originCheckConfig OriginCheckConfig) func(http.Handle
 	if originCheckConfig.ValidateMethod == nil {
 		originCheckConfig.ValidateMethod = DefaultValidateMethod
 	}
+
 	if originCheckConfig.AllowOrigin == nil {
 		originCheckConfig.AllowOrigin = DefaultAllowOrigin
 	}
+
 	if originCheckConfig.AllowSite == nil {
 		originCheckConfig.AllowSite = DefaultAllowSite
 	}
+
 	if originCheckConfig.ErrorHandler == nil {
 		originCheckConfig.ErrorHandler = DefaultErrorHandler
 	}
+
 	return func(handler http.Handler) http.Handler {
 		return &originCheck{
 			validateMethod: originCheckConfig.ValidateMethod,
