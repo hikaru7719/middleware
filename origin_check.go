@@ -26,6 +26,15 @@ type OriginCheckConfig struct {
 	ErrorHandler   http.Handler
 }
 
+var (
+	DefaultValidateMethod = []string{http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete}
+	DefaultAllowOrigin    = []string{}
+	DefaultAllowSite      = []SecFetchSite{SecFetchSiteSameOrigin}
+	DefaultErrorHandler   = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+	})
+)
+
 type originCheck struct {
 	validateMethod []string
 	allowOrigin    []string
@@ -40,6 +49,18 @@ var (
 )
 
 func OriginCheckWithConfig(originCheckConfig OriginCheckConfig) func(http.Handler) http.Handler {
+	if originCheckConfig.ValidateMethod == nil {
+		originCheckConfig.ValidateMethod = DefaultValidateMethod
+	}
+	if originCheckConfig.AllowOrigin == nil {
+		originCheckConfig.AllowOrigin = DefaultAllowOrigin
+	}
+	if originCheckConfig.AllowSite == nil {
+		originCheckConfig.AllowSite = DefaultAllowSite
+	}
+	if originCheckConfig.ErrorHandler == nil {
+		originCheckConfig.ErrorHandler = DefaultErrorHandler
+	}
 	return func(handler http.Handler) http.Handler {
 		return &originCheck{
 			validateMethod: originCheckConfig.ValidateMethod,
@@ -70,5 +91,4 @@ func (oc *originCheck) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	oc.handler.ServeHTTP(w, r)
-	return
 }
