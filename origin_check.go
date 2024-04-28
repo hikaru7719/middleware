@@ -51,24 +51,24 @@ func OriginCheckWithConfig(originCheckConfig OriginCheckConfig) func(http.Handle
 	}
 }
 
-func (oc *originCheck) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	if !slices.Contains(oc.validateMethod, req.Method) {
-		oc.handler.ServeHTTP(w, req)
+func (oc *originCheck) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if !slices.Contains(oc.validateMethod, r.Method) {
+		oc.handler.ServeHTTP(w, r)
 		return
 	}
 
-	origin := req.Header.Get(originHeader)
+	origin := r.Header.Get(originHeader)
 	if !slices.Contains(oc.allowOrigin, origin) {
-		oc.errorHandler.ServeHTTP(w, req)
+		oc.errorHandler.ServeHTTP(w, r)
 		return
 	}
 
-	secFetchSite := req.Header.Get(secFetchSiteHeader)
+	secFetchSite := r.Header.Get(secFetchSiteHeader)
 	if secFetchSite != "" && !slices.Contains(oc.allowSite, SecFetchSite(secFetchSite)) {
-		oc.errorHandler.ServeHTTP(w, req)
+		oc.errorHandler.ServeHTTP(w, r)
 		return
 	}
 
-	oc.handler.ServeHTTP(w, req)
+	oc.handler.ServeHTTP(w, r)
 	return
 }
