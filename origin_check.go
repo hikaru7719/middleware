@@ -22,7 +22,6 @@ type OriginCheckConfig struct {
 	ValidateMethod []string
 	AllowOrigin    []string
 	AllowSite      []SecFetchSite
-	Handler        http.Handler
 	ErrorHandler   http.Handler
 }
 
