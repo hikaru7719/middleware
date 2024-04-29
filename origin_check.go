@@ -47,7 +47,7 @@ var (
 	secFetchSiteHeader = "sec-fetch-site"
 )
 
-func OriginCheckWithConfig(originCheckConfig OriginCheckConfig) func(http.Handler) http.Handler {
+func OriginCheck(originCheckConfig OriginCheckConfig) func(http.Handler) http.Handler {
 	if originCheckConfig.ValidateMethod == nil {
 		originCheckConfig.ValidateMethod = DefaultValidateMethod
 	}
